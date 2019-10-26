@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title> assignment 1 </title>
+	<meta charset="utf-8" />
+</head>
+
+
+<body>
+
+
+
+<p id="name" style="font-weight:bold"></p>
+<p id="city" style="font-weight:bold"></p>
+<p id="mobile" style="font-weight:bold"></p>
+
+<div id="button" style="display:none" >
+<button onclick="showForm()">Bước tiếp theo</button>
+</div>
+<br><br>
+<form id="x" style="display:none">
+	<label for="email">Vui lòng nhập email của bạn:</label><br>
+	<input type="text" name="email" id="email" required> 
+	<br><br>
+	
+	<label for="username">Hãy tạo tên đăng nhập: (8 đến 16 ký tự)</label><br>
+	<input type="text" name="username" required minlength="8" maxlength="16">
+	<br><br>
+	
+	<label for="pw">Khởi tạo mật khẩu (8 đến 16 ký tự)</label><br>
+	<input type="password" name="pw" id="pw" required minlength="8">
+	<br><br>
+	
+	<label for="pw-confirm">Xác nhận lại mật khẩu (8 đến 16 ký tự)</label><br>
+	<input type="password" name="pw-confirm" id="pw-confirm" required minlength="8">
+	<br><br>
+	<button type="submit">Xác Nhận </button>
+</form>
+
+
+<script>
+//Khi trang web đã được hoàn tất load lên thì sẽ chạy hàm notify
+window.onload=notify;
+
+//Khởi tạo hàm notify
+function notify() {
+	//Thông báo đầu tiên được hiển thị lên
+  alert("Chào mừng bạn đến với ứng dụng JavaScript đầu tiên");
+	
+	//Tiếp theo lần lượt các bảng nhập thông tin hiển thị lên và yêu cầu người dùng nhập thông tin
+	//Mỗi thông báo hiển thị nhập liệu thì dữ liệu được lưu trữ vào mỗi biến
+	const	x=prompt("Hãy nhập tên của bạn",""),
+			y=prompt("Hãy nhập thành phố bạn đang sống",""),
+			z=prompt("Hãy nhập số điện thoại của bạn","");
+	
+	//Lần lượt truy vấn DOM để gán giá trị biến vào nội dung HTML
+	document.getElementById("name").innerHTML=x;		
+	document.getElementById("city").innerHTML=y;		
+	document.getElementById("mobile").innerHTML=z;	
+	
+	//Sau khi kết thúc nhập liệu thì mỗi tag <p> sẽ hiển thị đúng thông tin người dùng đã nhập
+	
+	/* Kết thúc hàm thì câu lệnh sau sẽ truy vấn DOM cho ID "button" 
+	và thay đổi thuộc tính style.display của nó thành "block" */
+	
+	button=document.getElementById("button");
+	 button.style.display="block";	
+	 
+	//Lúc này nút "Bước Tiếp Theo" sẽ hiển thị
+	//Kết thúc hàm
+};
+
+//Khi người dùng bấm nút "Bước Tiếp Theo" thì sẽ hiển thị một form thông tin để điền vào
+function showForm() {
+	var form=document.getElementById("x");
+	form.style.display="block";
+};
+
+//Sau đây là thiết lập xác nhận khớp mật khẩu
+//Bắt buộc người dùng phải nhập khớp mật khẩu mới có thể tiếp tục
+
+//Khởi tạo 2 biến chứa element "Mật Khẩu" và "Xác nhận mật khẩu"
+const pw=document.getElementById("pw"),
+			pwconfirm=document.getElementById("pw-confirm");
+
+//Khởi tạo hàm so sánh giá trị của 2 elements "Mật Khẩu" và "Xác nhận mật khẩu"
+//Chỉ khi giá trị bằng nhau thì người dùng mới có thể bấm "Xác Nhận"
+function pwValidate() {
+	//Sử dụng logic if để kiểm tra người dùng có nhập đúng mật khẩu xác nhận không
+	(pw.value != pwconfirm.value) ? 
+		pwconfirm.setCustomValidity("Mật khẩu không khớp") : 
+		pwconfirm.setCustomValidity('');
+		
+	//Sử dụng Regular Expression để kiểm tra người dùng nhập mật khẩu theo đúng định dạng không
+	(pw.value.search(/[!@#$%^&*()]/g) == -1 || 
+	pw.value.search(/[a-z]/g) == -1 || 
+	pw.value.search(/[A-Z]/g) == -1)  ?
+	pwconfirm.setCustomValidity("Mật khẩu nên có ít nhất 1 chữ Hoa," +
+	"1 chữ thường và 1 trong các ký tự sau: !@#$%^&*()") : 
+		pwconfirm.setCustomValidity('');
+};
+
+/*Gán sự kiện cho 2 elements "Mật Khẩu" và "Xác nhận mật khẩu" để mỗi khi
+người dùng hoàn tất nhập liệu thì sẽ tiến hành chạy hàm test 2 giá trị */ 
+
+pw.onchange=pwValidate;
+pwconfirm.onkeyup=pwValidate;
+
+
+</script>
+
+
+</body>
+</html>
