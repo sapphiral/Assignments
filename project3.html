@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+* {
+margin:0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+text-align: center;
+}
+form {
+font: normal 18px "Helvetica";
+color: #333;
+margin-bottom: 10px;
+}
+
+form .wrapper {
+width: 400px;
+margin: 5px auto;
+
+}
+
+form label {
+display:inline-block;
+width: 100px;
+text-align: left;
+}
+
+form legend {
+font: bold 32px "Helvetica";
+}
+
+form label, form input {
+margin: 2px 0;
+}
+table {
+width: 100%;
+}
+
+table * {
+border: 1px solid black;
+margin: 1px;
+}
+
+.red * {
+font-weight: bold;
+color: hsla(360, 100%, 50%);
+}
+</style>
+</head>
+
+<body>
+
+<!-- lập form nhập liệu điểm toán của học sinh -->
+<form>
+	<fieldset>
+		<legend>Class Market</legend>
+			<div class="wrapper">
+				<!-- Yêu cầu nhập họ tên -->
+				<label for="fullName">Họ Tên</label>
+				<input type="text" name="fullName" id="fullName" /></br>
+				<!-- nhập điểm toan -->
+				<label for="diemToan">Điểm Toán</label>
+				<input type="text" name="diemToan" id="diemToan"/></br>
+				<!-- nhập điểm lý -->
+				<label for="diemLy">Điểm Lý</label>
+				<input type="text" name="dienLy" id="diemLy"/></br>
+				<!-- nhập điểm hóa -->
+				<label for="diemHoa">Điểm Hóa</label>
+				<input type="text" name="diemHoa" id="diemHoa"/></br>
+				
+			</div>
+			<!-- nhấn xác nhận -->
+			<input type="submit" id="s-1" value="Nhập">
+	</fieldset>
+</form>
+
+<!-- xây dụng bảng biểu thể hiện điểm -->
+<table>
+	<thead>
+		<tr>
+		<th>STT</th>
+		<th>Họ tên</th>
+		<th>Toán</th>
+		<th>Lý</th>
+		<th>Hóa</th>
+		<th>Trung bình</th>
+	</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+<button id="tbinh">Tính điểm trung bình</button>
+<button id="hsgioi">Xác định học sinh giỏi</button>
+</body>
+
+<script>
+$(document).ready(()=> {
+	console.log("hello world");
+	//Thêm event click cho nút "Nhập" kiểm tra các ô đã nhập hết chưa
+	$("[type=submit]").click(function() {
+		//nếu giá trị cờ của hàm validate() trả về là 1 thì thực hiện hàm validated
+		//nếu không thì bắt buộc người dùng nhập đủ thông tin để tiếp tục
+		validate() ? validated() : event.preventDefault() ;
+		});
+		
+	//khởi tạo hàm validate
+	function validate() {
+		
+		//đầu tiên là dựng giá trị cờ
+		flag = 1;
+		
+		//kiểm tra mỗi input của người dùng
+		//nếu có giá trị trống thì cờ sẽ được set về 0
+		//và thông báo cho người dùng không được để trống ô nhập liệu
+		$("input[type=text]").each(function(index, elem) {
+			$(elem).val() ? ("") : 
+				(alert("Không được để trống " + $(elem).prev().text()),
+				flag=0);
+				
+			index==0 ? (flag=1) : 
+			($(elem).val() < 0 || $(elem).val() > 10 || isNaN($(elem).val())) ? 
+			(alert("Vui lòng nhập đúng định dạng "+ 
+			$(elem).prev().text()+ 
+			" từ 0 đến 10"),flag=0) : ("");
+		});
+		
+		//trả về giá trị cờ
+		return flag;
+	}
+	//khỏi tạo hàm validated
+	function validated() {
+		//tạo số thứ tự
+		var stt = (()=> {return $("tbody").children().length + 1})();
+		//Tạo ra hàng điểm mới từ thông tin vừa nhập
+		var elem="<tr>" +
+			"<td>"+ stt + "</td>" +
+			"<td>"+ $("#fullName").val() + "</td>" +
+			"<td>"+ $("#diemToan").val() + "</td>" +
+			"<td>"+ $("#diemLy").val() + "</td>" +
+			"<td>"+ $("#diemHoa").val() + "</td>" +
+			"<td>"+ "?" + "</td>" +
+		"</tr>";
+		//Gán hàng mới vào bảng điểm
+		$("table").append(elem);
+		
+		//Xóa form sau khi nhập thành công
+		$("[type=text]").each((index, elem)=>{$(elem).val("")});
+		//Ngăn nút submit làm mới lại trang khi bấm submit
+		event.preventDefault();
+	}
+	
+	//xây dụng nút "Tính điểm trung bình"
+	$("#tbinh").on("click", ()=> {trungbinh()});
+	
+	//xây dụng nút "Xác định học sinh giỏi"
+	$("#hsgioi").on("click", ()=> {hocsinhgioi()});
+	
+	function trungbinh() {
+		//Với mỗi hàng trong bảng điểm thì ta làm như sau:
+		$("tbody").children().each((index,elem)=>{
+			//trong mỗi hàng trích xuất điểm từ index của các tag <td> con ra
+			//chuyển hóa thành int rồi tính trung bình cộng
+			toan=parseInt($($(elem).children()[2]).text());
+			ly=parseInt($($(elem).children()[3]).text());
+			hoa=parseInt($($(elem).children()[4]).text());
+			//.toFixed(n)  chuyển  int về  float với n số thập phân
+			tbinh = ((toan+ly+hoa)/3).toFixed(1);
+			//gán điểm trung bình vào ô "trung bình" của hàng
+			$($(elem).children()[5]).text(tbinh);
+			
+		});
+	};
+	function hocsinhgioi() {
+		//Với mỗi hàng trong bảng điểm thì ta làm như sau:
+		$("tbody").children().each((index,elem)=>{
+			tbinh=$($(elem).children()[5]).text();
+			(tbinh=="?") ? (alert("Vui lòng tính điểm Trung bình" +
+			" trước cho số thứ tự " + $($(elem).children()[0]).text())) :
+			(tbinh>=8.0) ? ($(elem).addClass("red")) : ("");
+		});
+	};
+});
+</script>
+</html>
