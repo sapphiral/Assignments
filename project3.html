@@ -144,7 +144,7 @@ $(document).ready(()=> {
 			"<td>"+ $("#diemToan").val() + "</td>" +
 			"<td>"+ $("#diemLy").val() + "</td>" +
 			"<td>"+ $("#diemHoa").val() + "</td>" +
-			"<td>"+ "?" + "</td>" +
+			"<td class='tb'>"+ "?" + "</td>" +
 		"</tr>";
 		//Gán hàng mới vào bảng điểm
 		$("table").append(elem);
@@ -162,6 +162,10 @@ $(document).ready(()=> {
 	$("#hsgioi").on("click", ()=> {hocsinhgioi()});
 	
 	function trungbinh() {
+		if ($("tbody").children().length==0) {
+			alert("Hiện không có học sinh trong bảng");
+			return false;
+			}
 		//Với mỗi hàng trong bảng điểm thì ta làm như sau:
 		$("tbody").children().each((index,elem)=>{
 			//trong mỗi hàng trích xuất điểm từ index của các tag <td> con ra
@@ -178,12 +182,18 @@ $(document).ready(()=> {
 	};
 	function hocsinhgioi() {
 		//Với mỗi hàng trong bảng điểm thì ta làm như sau:
+		flag=1;
 		$("tbody").children().each((index,elem)=>{
 			tbinh=$($(elem).children()[5]).text();
 			(tbinh=="?") ? (alert("Vui lòng tính điểm Trung bình" +
-			" trước cho số thứ tự " + $($(elem).children()[0]).text())) :
-			(tbinh>=8.0) ? ($(elem).addClass("red")) : ("");
+			" trước cho số thứ tự " + $($(elem).children()[0], flag=0).text())) :
+			(tbinh>=8.0) ? ($(elem).addClass("red"), flag=0) : ("");
 		});
+		if ($("tbody").children().length==0) {
+			alert("Hiện không có học sinh trong bảng");
+		} else if (flag==1) {
+			alert("Hiện không có học sinh giỏi!!");
+			};
 	};
 });
 </script>
